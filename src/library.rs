@@ -4,7 +4,7 @@ use std::io;
 use std::process::Command;
 use colored::Colorize;
 use users::get_current_username;
-use piglog::prelude::*;
+use piglog::{error, prelude::*};
 use hashbrown::HashMap;
 
 use crate::convert::*;
@@ -26,9 +26,12 @@ pub fn abort() { // Try not to use this function!
 }
 
 pub fn run_command(command: &str) -> bool {
-    match Command::new("bash").args(["-c", command]).status() {
+    match Command::new("sh").args(["-c", command]).status() {
         Ok(o) => o,
-        Err(_e) => return false,
+        Err(e) => {
+            error!("Encountered error while running command: {}", e);
+            return false
+        },
     }.success()
 }
 
